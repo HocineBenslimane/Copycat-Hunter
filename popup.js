@@ -94,80 +94,51 @@ function fillDetails(lic) {
   const p = lic.purchase;
   if (!p) return;
   
-  // SUPER EXPLICIT DEBUG LOGGING
-  console.log('========== LICENSE DATA DEBUG ==========');
-  console.log('Full purchase object:', p);
-  console.log('Recurrence type:', p.recurrence);
-  console.log('Variants:', p.variants);
-  console.log('Created at:', p.created_at);
-  console.log('Subscription end:', p.subscription_ended_at);
-  console.log('Subscription cancelled:', p.subscription_cancelled_at);
-  console.log('=======================================');
+  ui.details.innerHTML = '';
   
-  // DIRECT DOM MANIPULATION APPROACH
-  // Create a clean element structure
-  ui.details.innerHTML = ''; // Clear existing content
-  
-  // Add plan type line
+  // Create plan type line
   const planElement = document.createElement('div');
+  planElement.style.marginBottom = '4px';
   
-  // FIXED TEXT FOR PLAN TYPES
   if (p.recurrence === 'yearly') {
-    planElement.textContent = 'Plan: (Yearly)';
-    
-    // Explicitly create renewal element
-    const renewalElement = document.createElement('div');
-    renewalElement.textContent = 'Renews yearly';
-    
-    // Add both elements to the details container
-    ui.details.appendChild(planElement);
-    ui.details.appendChild(renewalElement);
+    planElement.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <span>Plan Type</span>
+        <strong>Yearly</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px">
+        <span>Status</span>
+        <strong style="color:var(--snap-green)">Active</strong>
+      </div>
+    `;
   } 
   else if (p.recurrence === 'monthly') {
-    planElement.textContent = 'Plan: (Monthly)';
-    
-    // Explicitly create renewal element
-    const renewalElement = document.createElement('div');
-    renewalElement.textContent = 'Renews monthly';
-    
-    // Add both elements to the details container
-    ui.details.appendChild(planElement);
-    ui.details.appendChild(renewalElement);
+    planElement.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <span>Plan Type</span>
+        <strong>Monthly</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px">
+        <span>Status</span>
+        <strong style="color:var(--snap-green)">Active</strong>
+      </div>
+    `;
   }
   else {
-    // One-time purchase
-    planElement.textContent = `Plan: (${p.variants || 'One-time'})`;
-    
-    // Explicitly create expiry element
-    const expiryElement = document.createElement('div');
-    expiryElement.textContent = 'Never expires';
-    
-    // Add both elements to the details container
-    ui.details.appendChild(planElement);
-    ui.details.appendChild(expiryElement);
+    planElement.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <span>Plan Type</span>
+        <strong>Lifetime</strong>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px">
+        <span>Status</span>
+        <strong style="color:var(--snap-green)">Active</strong>
+      </div>
+    `;
   }
   
+  ui.details.appendChild(planElement);
   ui.details.style.display = "block";
-}
-
-// Create license serialization (unique, tamper-proof license ID tied to this device)
-async function createLicenseSerialForDevice(licenseKey, deviceId) {
-  // Combine license key and device ID to create a unique signature
-  const combo = licenseKey + '-' + deviceId;
-  
-  // Create a more secure hash from the combination
-  let hash = 0;
-  for (let i = 0; i < combo.length; i++) {
-    const char = combo.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  
-  // Add more entropy based on the current timestamp
-  const timestamp = Date.now();
-  const serial = `${Math.abs(hash).toString(16)}-${timestamp.toString(36)}`;
-  
-  return serial;
 }
 
 ui.save.onclick = async () => {
