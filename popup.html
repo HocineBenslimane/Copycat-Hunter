@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Snap Copycats Reporter</title>
+  <style>
+    :root {
+      --snap-purple: #6b5cff;
+      --snap-hover: #594df5;
+      --snap-green: #2e8b57;
+      --snap-red: #c0392b;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    body {
+      margin: 0;
+      padding: 16px;
+      width: 300px;
+      background: #f9f9fb;
+      color: #333;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--snap-purple), #8a7dff);
+    }
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #1c1c1e;
+    }
+    input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #e2e2e6;
+      border-radius: var(--radius);
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--snap-purple);
+      box-shadow: 0 0 0 2px rgba(107, 92, 255, 0.2);
+    }
+    button {
+      background: var(--snap-purple);
+      color: #fff;
+      border: none;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 1px 3px rgba(107, 92, 255, 0.3);
+      display: block;
+      width: 130px;
+      margin: 0 auto;
+    }
+    button:disabled { background: #a8a8a8; cursor: not-allowed; box-shadow: none; }
+    button:hover:not(:disabled) { background: var(--snap-hover); transform: translateY(-1px); }
+    button:active:not(:disabled) { transform: translateY(0); }
+    .status { 
+      font-size: 13px; 
+      white-space: normal; 
+      line-height: 1.4;
+    }
+    .ok { color: var(--snap-green); }
+    .bad { color: var(--snap-red); }
+    #details { color:#555; line-height:1.3; }
+    
+    #activation-container {
+      transition: max-height 0.4s, opacity 0.3s;
+      max-height: 200px;
+      opacity: 1;
+      overflow: hidden;
+    }
+    #activation-container.hidden {
+      max-height: 0;
+      opacity: 0;
+      margin-top: -10px;
+      pointer-events: none;
+    }
+    
+    .signature {
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+      margin-top: 4px;
+      margin-bottom: -6px;
+    }
+    
+    .activated-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background-color: rgba(46, 139, 87, 0.1);
+      color: var(--snap-green);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 500;
+      font-size: 13px;
+      width: fit-content;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>License Key</h2>
+    <div id="activated" style="display:none" class="activated-badge">Activated ✓</div>
+    <div id="details" class="status" style="display:none"></div>
+    
+    <div id="activation-container">
+      <input id="license" placeholder="XXXX-XXXX-XXXX-XXXX" />
+      <button id="save">Activate</button>
+      <div id="msg" class="status"></div>
+    </div>
+    
+    <div class="signature">Developed by @Timo_Ben</div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

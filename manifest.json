@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "Snap Copycats Reporter",
+  "version": "4.0.0",
+  "description": "Quickly report copycat listings on Amazon.",
+  "permissions": [
+    "storage",
+    "notifications"
+  ],
+  "host_permissions": [
+    "*://www.amazon.com/*",
+    "*://www.amazon.co.uk/*",
+    "*://www.amazon.de/*",
+    "*://www.amazon.fr/*",
+    "*://www.amazon.it/*",
+    "*://www.amazon.es/*",
+    "*://www.amazon.co.jp/*",
+    "*://api.gumroad.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.amazon.com/*",
+        "*://www.amazon.co.uk/*",
+        "*://www.amazon.de/*",
+        "*://www.amazon.fr/*",
+        "*://www.amazon.it/*",
+        "*://www.amazon.es/*",
+        "*://www.amazon.co.jp/*"
+      ],
+      "js": ["snap-ham.js", "snap-find.js", "snap-rep.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://www.amazon.com/report/infringement*",
+        "*://www.amazon.co.uk/report/infringement*",
+        "*://www.amazon.de/report/infringement*",
+        "*://www.amazon.fr/report/infringement*",
+        "*://www.amazon.it/report/infringement*",
+        "*://www.amazon.es/report/infringement*",
+        "*://www.amazon.co.jp/report/infringement*"
+      ],
+      "js": ["snap-rep.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "Icon.png",
+    "48": "Icon.png",
+    "128": "Icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "snap-rep.js",
+        "assets/*",
+        "fonts/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "Icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
