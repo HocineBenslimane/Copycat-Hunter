@@ -1,16 +1,6 @@
 // Report History Implementation
 const HISTORY_STORAGE_KEY = 'reportHistory';
 
-// History entry structure:
-// {
-//   id: string,          // Unique ID for the report
-//   timestamp: number,   // When the report was made
-//   reportedAsins: string[], // ASINs that were reported
-//   issueType: string,   // Type of issue reported
-//   marketplace: string, // Which marketplace (US, UK, etc)
-//   status: string      // Status of the report
-// }
-
 class ReportHistory {
   constructor() {
     this.initializeUI();
@@ -31,6 +21,7 @@ class ReportHistory {
       justify-content: center;
       align-items: center;
       z-index: 999999;
+      font-family: 'Amazon Ember', -apple-system, BlinkMacSystemFont, sans-serif;
     `;
 
     const panel = document.createElement('div');
@@ -38,7 +29,7 @@ class ReportHistory {
       width: 800px;
       max-height: 80vh;
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 24px;
       position: relative;
       display: flex;
@@ -71,6 +62,7 @@ class ReportHistory {
       cursor: pointer;
       padding: 0;
       color: #666;
+      line-height: 1;
     `;
     closeBtn.onclick = () => this.hideHistory();
 
@@ -122,6 +114,7 @@ class ReportHistory {
     table.style.cssText = `
       width: 100%;
       border-collapse: collapse;
+      font-size: 14px;
     `;
 
     table.innerHTML = `
@@ -142,7 +135,13 @@ class ReportHistory {
             <td style="padding: 12px; border-bottom: 1px solid #eee;">${entry.issueType}</td>
             <td style="padding: 12px; border-bottom: 1px solid #eee;">${entry.reportedAsins.join(', ')}</td>
             <td style="padding: 12px; border-bottom: 1px solid #eee;">
-              <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; background: ${this.getStatusColor(entry.status)}">
+              <span style="
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 500;
+                ${this.getStatusStyle(entry.status)}
+              ">
                 ${entry.status}
               </span>
             </td>
@@ -155,12 +154,28 @@ class ReportHistory {
     content.appendChild(table);
   }
 
-  getStatusColor(status) {
+  getStatusStyle(status) {
     switch (status.toLowerCase()) {
-      case 'completed': return '#e8f5e9';
-      case 'pending': return '#fff3e0';
-      case 'failed': return '#ffebee';
-      default: return '#f5f5f5';
+      case 'completed':
+        return `
+          background: #e8f5e9;
+          color: #2e7d32;
+        `;
+      case 'pending':
+        return `
+          background: #fff3e0;
+          color: #ef6c00;
+        `;
+      case 'failed':
+        return `
+          background: #ffebee;
+          color: #c62828;
+        `;
+      default:
+        return `
+          background: #f5f5f5;
+          color: #666;
+        `;
     }
   }
 
@@ -197,6 +212,7 @@ class ReportHistory {
       }
 
       await chrome.storage.local.set({ [HISTORY_STORAGE_KEY]: history });
+      this.renderHistory(history); // Update UI if visible
     } catch (err) {
       console.error('Error saving report history:', err);
     }
