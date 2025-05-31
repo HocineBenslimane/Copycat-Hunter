@@ -106,7 +106,7 @@
     historyBtn.onclick = () => {
       historyBtn.style.background = '#ededef';
       reportBtn.style.background = '#f5f5f7';
-      showHistoryView();
+      window.reportHistory.showHistory();
     };
 
     // Content area
@@ -116,29 +116,6 @@
       padding: 16px;
       min-height: 200px;
     `;
-
-    // Drop zone for reports
-    content.addEventListener('dragover', e => {
-      e.preventDefault();
-      content.style.backgroundColor = '#f5f0ff';
-    });
-
-    content.addEventListener('dragleave', () => {
-      content.style.backgroundColor = 'transparent';
-    });
-
-    content.addEventListener('drop', e => {
-      e.preventDefault();
-      content.style.backgroundColor = 'transparent';
-      
-      // Extract ASIN from URL
-      const url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
-      const asin = url.match(/\/dp\/([A-Z0-9]{10})/)?.[1];
-      
-      if (asin) {
-        window.open(`https://${window.location.hostname}/report/infringement?Snap&asin=${asin}`, '_blank');
-      }
-    });
 
     // Important notice
     const notice = document.createElement('div');
@@ -186,9 +163,5 @@
         Drag listings here to report
       </div>
     `;
-  }
-
-  function showHistoryView() {
-    window.reportHistory.showHistory();
   }
 })();
