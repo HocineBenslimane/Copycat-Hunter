@@ -6,11 +6,16 @@ chrome.storage.local.get('license', ({license}) => {
   if (!license || license.invalid) return; // Exit if no valid license
 
 (function() {
+  // Check if we're on StyleSnap page
+  const isStyleSnap = window.location.pathname.includes('/stylesnap');
   const PRODUCT_REGEX = /(\/dp\/|\/gp\/product\/|\/product\/)\w?/;
-  if (!PRODUCT_REGEX.test(window.location.pathname)) {
-    // Not a product page — ensure any stray blue button is removed and exit.
-    const old = document.getElementById('snap-find-btn');
-    old && old.remove();
+  
+  if (!PRODUCT_REGEX.test(window.location.pathname) && !isStyleSnap) {
+    // Not a product or StyleSnap page — ensure any stray buttons are removed and exit
+    const oldBlue = document.getElementById('snap-find-btn');
+    const oldBlack = document.getElementById('snap-report-btn'); 
+    oldBlue && oldBlue.remove();
+    oldBlack && oldBlack.remove();
     return;
   }
 
@@ -23,9 +28,50 @@ chrome.storage.local.get('license', ({license}) => {
   // Run again in a tick to catch late-loaded script.
   setTimeout(hideHammer, 1500);
 
-  if (document.getElementById('snap-find-btn')) return; // already injected
+  // Don't add buttons if already present
+  if (document.getElementById('snap-find-btn') || document.getElementById('snap-report-btn')) return;
 
-  // Build the blue circular button.
+  if (isStyleSnap) {
+    // Add black report button on StyleSnap page
+    const reportBtn = document.createElement('div');
+    reportBtn.id = 'snap-report-btn';
+    reportBtn.setAttribute('data-tooltip', 'Report this listing');
+    reportBtn.style.cssText = [
+      'position:fixed',
+      'bottom:80px',
+      'right:80px',
+      'z-index:999997',
+      'display:flex',
+      'align-items:center',
+      'justify-content:center',
+      'width:100px',
+      'height:100px',
+      'border-radius:50%',
+      'background:#1c1c1e',
+      'color:#fff',
+      'font-family:\'Amazon Ember\',sans-serif',
+      'font-weight:700',
+      'font-size:14px',
+      'box-shadow:0 2px 10px rgba(0,0,0,0.2)',
+      'cursor:pointer',
+      'transition:transform 0.2s ease-out'
+    ].join(';');
+    reportBtn.textContent = 'Report\nListing';
+    reportBtn.style.textAlign = 'center';
+    reportBtn.style.whiteSpace = 'pre-line';
+
+    reportBtn.addEventListener('click', () => {
+      const asin = new URLSearchParams(window.location.search).get('asin');
+      if (asin) {
+        window.open(`https://${window.location.hostname}/report/infringement?Snap&asin=${asin}`, '_blank');
+      }
+    });
+
+    document.body.appendChild(reportBtn);
+    return;
+  }
+
+  // Build the blue circular button for product pages
   const btn = document.createElement('div');
   btn.id = 'snap-find-btn';
   btn.setAttribute('data-tooltip', 'Drag an image here to find copycats');
@@ -40,7 +86,7 @@ chrome.storage.local.get('license', ({license}) => {
     'width:100px',
     'height:100px',
     'border-radius:50%',
-    'background:#0d6efd', /* bootstrap primary blue */
+    'background:#0d6efd',
     'color:#fff',
     'font-family:\'Amazon Ember\',sans-serif',
     'font-weight:700',
